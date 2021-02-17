@@ -1,0 +1,31 @@
+{
+  "name": "volume-builder",
+  "version": "1.0.0",
+  "description": " Creates volume objects from dagcom studies ",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha --recursive --trace-warnings --unhandled-rejections=strict"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chafey/volume-builder-js.git"
+  },
+  "keywords": [
+    "DICOM",
+    "Volume"
+  ],
+  "author": "Chris Hafey <chafey@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chafey/volume-builder-js/issues"
+  },
+  "homepage": "https://github.com/chafey/volume-builder-js#readme",
+  "devDependencies": {
+    "mocha": "^8.3.0"
+  },
+  "dependencies": {
+    "ion-hash-js": "^2.0.0",
+    "ion-js": "^4.1.0",
+    "jsbi": "^3.1.4"
+  }
+}

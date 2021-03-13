@@ -28,10 +28,73 @@ const getFloatString = (value, defaultValue) => {
 // sorts from most positive image position to most negative image position
 // e.g. (from positive Z to negative Z for axials, positive X to negative X for sagittal, positive y to negative y for coronal)
 const getSortedSopInstances = (groupsAndSopInstances) => {
+    // sort by InstanceNumber to get them in roughly the right order
+    groupsAndSopInstances.sopInstances.sort((a,b) => {
+        const ain = parseInt(a.InstanceNumber)
+        const bin = parseInt(b.InstanceNumber)
+        return ain - bin
+    })
+
+    groupsAndSopInstances.sopInstances.forEach(sopInstance => {
+        const ipp = sopInstance.ImagePositionPatient.stringValue().split('\\')
+        sopInstance.ipp = {x: parseFloat(ipp[0]), y: parseFloat(ipp[1]), z: parseFloat(ipp[2])}
+    })
+
+
+    // calculate unit vector between first and second image
+    const iv = {
+        x : groupsAndSopInstances.sopInstances[0].ipp.x - groupsAndSopInstances.sopInstances[1].ipp.x,
+        y : groupsAndSopInstances.sopInstances[0].ipp.y - groupsAndSopInstances.sopInstances[1].ipp.y,
+        z : groupsAndSopInstances.sopInstances[0].ipp.z - groupsAndSopInstances.sopInstances[1].ipp.z,
+    }
+    const ivmag = getVectorMagnitude(iv)
+    const uv = {
+        x: iv.x / ivmag,
+        y: iv.y / ivmag,
+        z: -Math.abs(iv.z / ivmag) // force increasing Z
+    }
+    // calculate the dot product between unit vector and image patient position
+    groupsAndSopInstances.sopInstances.forEach(sopInstance => {
+        sopInstance.dot = (sopInstance.ipp.x * uv.x + sopInstance.ipp.y * uv.y + sopInstance.ipp.z * uv.z)
+    })
+
+
+    // sort by the dot product of the unit vector and ipp
+    groupsAndSopInstances.sopInstances.sort((a,b) => {
+        return a.dot - b.dot
+    })
+
+    return groupsAndSopInstances.sopInstances
+    /*
+    // create image position patient vector
+    groupsAndSopInstances.sopInstances.forEach(sopInstance => {
+        const ipp = sopInstance.ImagePositionPatient.stringValue().split('\\')
+        sopInstance.ipp = {x: ipp[0], y: ipp[1], z: ipp[2]}
+    })
+
+    // create a vector between two images
+    const iv = {
+        x : groupsAndSopInstances.sopInstances[0].x - groupsAndSopInstances.sopInstances[1].x,
+        y : groupsAndSopInstances.sopInstances[0].y - groupsAndSopInstances.sopInstances[1].y,
+        z : groupsAndSopInstances.sopInstances[0].z - groupsAndSopInstances.sopInstances[1].z,
+    }
+
     return groupsAndSopInstances.sopInstances.sort((a,b) => {
-        const iv = getSliceIntervalVector(a, b)
+        if(!a.ipp) {
+            a.ipp = (a.)
+        }
+        if(!b.ipp) {
+            b.ipp = (b.ImagePositionPatient.stringValue().split('\\'))
+        }
+        const iv = { 
+            x: parseFloat(a.ipp[0]) - parseFloat(b.ipp[0]),
+            y: parseFloat(a.ipp[1]) - parseFloat(b.ipp[1]),
+            z: parseFloat(a.ipp[2]) - parseFloat(b.ipp[2]),
+        }
+        const dota = iv.x * a.ipp[0] + iv.y
         return getVectorMagnitude(iv)
     })
+    */
 }
 
 const getSliceIntervalVector = (firstSopInstance, secondSopInstance) => {

@@ -128,6 +128,7 @@ const seriesToVolumes = (series, study) => {
 }
 
 const buildVolumes = (study) => {
+    //console.log(study)
     const seriesList = study.get('series')
     let studyVolumes = []
     for(let [_seriesUid, series] of seriesList.fields()) {

@@ -1,0 +1,1 @@
+> node index.js ../../extern/dagcom-test-data/ion/study/ClearCanvas/PTCTStudy ../../extern/dagcom-test-data/ion/volume/ClearCanvas/PTCTStudy
